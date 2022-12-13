@@ -11,7 +11,7 @@ function [pvalue,dist_tt,meandiff,Resul] = accuracy_test(y,yhatA,yhatB,teste,nit
 %  tpareado  : teste-t pareado bicaudal.
 % niter : numero de permutacoes; 500000
 % alpha : nivel de significancia adotado; 0.05
-% 
+%
 % output
 % pvalue : estatistica de teste.
 % Se o pvalue < alpha : a diferenca na acuracia dos modelos e diferente.
@@ -19,21 +19,21 @@ function [pvalue,dist_tt,meandiff,Resul] = accuracy_test(y,yhatA,yhatB,teste,nit
 % [pvalue,dist_tt,meandiff] = accuracy_test(y,ypA,ypB,randuni,500000,0.05)
 %
 % Paulo R. Filgueiras  - 26/06/2014
-% 
+%
 % Referencia
 % Van der Voet, H. Chemom. Intel. Lab. Syst. 25, 1994, 313-323.
 %
 if nargin==3
     teste='randbi';
-    niter=100000; 
-    alpha=0.05; 
-elseif nargin==4 
-    niter=100000; 
-    alpha=0.05; 
-elseif nargin==5 
-    alpha=0.05; 
+    niter=100000;
+    alpha=0.05;
+elseif nargin==4
+    niter=100000;
+    alpha=0.05;
+elseif nargin==5
+    alpha=0.05;
 end
-    
+
 eA=y-yhatA;
 eB=y-yhatB;
 diff=eA.^2-eB.^2;
@@ -42,8 +42,8 @@ n=length(diff);
 %niter=199;
 sum=0;
 dist_tt=[];
-if strcmp(teste,'randbi');   % teste ramdômico bicaudal
-    
+if strcmp(teste,'randbi');   % teste ramdï¿½mico bicaudal
+
 for k=1:niter
     randomsign=2*round(rand(n,1))-1;
     signeddiff=randomsign.*diff;
@@ -58,8 +58,8 @@ axes('FontSize',16,'FontName','Arial');
 hist(dist_tt,50), vline(meandiff,'r');
 h = findobj(gca,'Type','patch');
 set(h,'FaceColor',[.8 .8 .8],'EdgeColor','k');
-ylabel('Frequência','FontSize',24,'FontName','arial');
-xlabel('Distribuição aleatória','FontSize',24,'FontName','arial');  
+ylabel('Frequencia','FontSize',24,'FontName','arial');
+xlabel('Distribuicao aleatoria','FontSize',24,'FontName','arial');
 
 
 if pvalue < alpha
@@ -72,7 +72,7 @@ else
     Resul = "Iguais";
 end
 
-elseif strcmp(teste,'randuni');    % teste ramdômico unicaudal
+elseif strcmp(teste,'randuni');    % teste ramdï¿½mico unicaudal
 for k=1:niter
     randomsign=2*round(rand(n,1))-1;
     signeddiff=randomsign.*diff;
@@ -82,27 +82,27 @@ for k=1:niter
 end
 pvalue=(sum+1)/(niter+1);
 
-    
+
 figure(1);
 axes('FontSize',16,'FontName','Arial');
 hist(dist_tt,50), vline(meandiff,'r');
 h = findobj(gca,'Type','patch');
 set(h,'FaceColor',[.8 .8 .8],'EdgeColor','k');
-ylabel('Frequência','FontSize',24,'FontName','arial');
-xlabel('Distribuição aleatória','FontSize',24,'FontName','arial');  
+ylabel('Frequencia','FontSize',24,'FontName','arial');
+xlabel('Distribuicao aleatoria','FontSize',24,'FontName','arial');
 
 if pvalue < alpha
     s = sprintf('p-cal = %g < alpha = %g',pvalue,alpha); disp(s)
-    disp('Modelos com DIFERENÇAS na acurácia');
+    disp('Modelos com DIFERENCAS na acuracia')
     Resul = "Diferente";
 else
     s = sprintf('p-cal = %g > alpha = %g',pvalue,alpha); disp(s)
-    disp('Modelos com acurácias iguais');
+    disp('Modelos com acuracias iguais')
     Resul = "Iguais";
 end
 
 elseif strcmp(teste,'tpareado');
-% teste-t em para para médias (teste bicaudal)
+% teste-t em para para mï¿½dias (teste bicaudal)
 diff1 = eA-eB;
 meandiff1=mean(diff1);
 stddiff1=std(diff1);
@@ -110,16 +110,16 @@ tcalc = (meandiff1*sqrt(length(diff1)))/(stddiff1);
 tstat = tinv((1-alpha/2),length(diff1)-1);
 pvalue = 1-tcdf(tcalc,length(diff1)-1);
 
-disp(' Teste-t em para para médias ');
+disp(' Teste-t em para para medias ');
 
 if tcalc < tstat
     s = sprintf('tcal = %g < t-tabelado = %g',tcalc,tstat); disp(s)
-    disp('Modelos com acurácias iguais')
+    disp('Modelos com acuracias iguais')
     s = sprintf('pvalor = %g',pvalue); disp(s)
     Resul = "Iguais";
 else
     s = sprintf('tcal = %g > t-tabelado = %g',tcalc,tstat); disp(s)
-    disp('Modelos com DIFERENÇAS na acurácia')
+    disp('Modelos com DIFERENCASAS na acuracia')
     s = sprintf('pvalor = %g',pvalue); disp(s);
     Resul = "Diferente";
 end

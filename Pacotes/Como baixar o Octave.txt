@@ -1,0 +1,4 @@
+1. Acesse o site oficial do Octave.
+https://octave.org/download
+
+2. Click no link referente ao seu sistema operacional de computador.

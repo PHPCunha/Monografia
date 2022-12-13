@@ -26,9 +26,9 @@ pkg load statistics
 pkg load io
 
 % Vamos mudar o Diretorio para onde colocamos os dados do IFES-Ciencia
-% {Lembre-se de substituir o diretorio dentro do comando "cd" pelo diretorio correto.}
-cd('C:\Users\Pedro\OneDrive - aluno.ufes.br\Quimiometria\IFES Ciencia\PLS_Model');
-%cd('...\IFES Ciencia\PLS_Model');
+% {Lembre-se de substituir o diretorio dentro do comando "cd" pelo diretorio
+% correto.}
+cd('...\IFES Ciencia\PLS_Model');
 
 load('Dados_API.mat')
 
@@ -191,7 +191,7 @@ ylabel('Predicted','fontsize',12);
 % Neste caso iremos usar estes padroes.
 tic
 [pvalue,dist_tt,meandiff] = accuracy_test(modelo4.Ytest(:,1),modelo4.Ytest(:,2),modelo6.Ytest(:,2),'randbi',500000,0.05);
-toc  %{892 sec_Pedro}
+toc  %{892 sec_Pedro 495 sec_Pedro2}
 % Esta demorando? Nao se preocupe, costuma demorar mesmo.
 
 % Tem duas formas de avaliar se os modelos sao diferentes;
@@ -386,7 +386,7 @@ ylabel('Predicted','fontsize',12);
 
 tic
 [pvalue,dist_tt,meandiff] = accuracy_test(ytest,modelo6.Ytest(:,2),modelo9.Ytest(:,2),'randbi',500000,0.05);
-toc %{875 sec_Pedro}
+toc %{875 sec_Pedro 496 sec_Pedro}
 
 % A acuracia de ambos modelos sao estatisticamente semelhantes, entao, nao
 % podemos afirmar que o modelo com duplo pretratamento e VL 9 e melhor
@@ -567,7 +567,7 @@ legend('off')
 % Agora nao temos nenhum amostra anomola.
 
 %% Selecao de Variaveis
-% O aperfeiçoamento por Selecao de Variaveis pode ser realizado por
+% O aperfeiï¿½oamento por Selecao de Variaveis pode ser realizado por
 % diversas tecnicas, o seu foco e conseguir selecionar as variaveis da
 % fonte analitica que tem as informacoes mais importantes para o modelo e
 % como consequencia, remover variaveis com pouca, ou nenhuma, informacao,
