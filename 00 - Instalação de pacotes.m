@@ -7,7 +7,7 @@
 
 
 % Localização dos Pacotes
-cd('C:\Users\quim_massas\OneDrive - aluno.ufes.br\Quimiometria\IFES Ciencia\Pacotes');
+cd('C:\Users\Exemplo\...\Monografia\Pacotes');
 
 % Pacote voltado para estatistica.
 pkg install statistics-1.4.3.tar.gz

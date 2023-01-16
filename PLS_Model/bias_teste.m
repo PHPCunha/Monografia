@@ -4,7 +4,7 @@ function teste = bias_teste(valor_real,valor_previsto,pvalor)
 %    valor_real: valor de referencia
 %    valor_previsto: resultado calculado (modelado)
 %    pvalor: valor de teste segundo a distribuicao t-studente (padrao 0.05)
-% 
+%
 % teste = bias_teste(valor_real,valor_previsto,pvalor);
 %
 % Paulo R. Filgueiras 03/12/2012
@@ -21,12 +21,12 @@ teste.ttab=abs(tinv(pvalor,(length(valor_real)-1)));
 disp('  ')
 if teste.t < teste.ttab
     s = sprintf('tcal = %g < ttab = %g',teste.t,teste.ttab); disp(s)
-    disp('Erros sistematicos NAO significativos')
-    teste.Conclusion = 'Erros sistematicos NAO significativos';
+    disp('Erros sistematicos NAO significativos.')
+    teste.Conclusion = 'Erros sistematicos NAO significativos.';
 else
     s = sprintf('tcal = %g > ttab = %g',teste.t,teste.ttab); disp(s)
-    disp('Os erros sistematicos sao significativos')
-    teste.Conclusion = 'Os erros sistematicos sao significativos';
+    disp('Os erros sistematicos SAO significativos.')
+    teste.Conclusion = 'Os erros sistematicos sao significativos.';
 end
 disp('  ')
 

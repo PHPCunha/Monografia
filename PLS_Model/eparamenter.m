@@ -1,8 +1,8 @@
 function modelo=eparamenter(modelo,Xcal,Xtest,ycal,ytest)
 %------------------------------------------------------------------------------------------
-% Funcao criada para gerar parametros de avaliacao (evaluation paramenter) 
+% Funcao criada para gerar parametros de avaliacao (evaluation paramenter)
 % de forma simples e facil, acompanhado do pldmodel do artigo da
-% IFES-Ciencia. 
+% IFES-Ciencia.
 % Compativel em Octave e Matlab.
 %
 %
@@ -11,22 +11,22 @@ function modelo=eparamenter(modelo,Xcal,Xtest,ycal,ytest)
 % Entradas:
 % modelo = modelo; Deriavo de plsmodel (IFES-Ciencia)
 % Xcal   = matriz X de calibracao;
-% Xtest  = matriz X de test; 
-% ycal   = vetor y de calibração;
-% ytest  = vetor y de teste;      
-%     
+% Xtest  = matriz X de test;
+% ycal   = vetor y de calibracao;
+% ytest  = vetor y de teste;
+%
 % Saidas:
-%      seletividade = vetor que contem a seletividade de cada amostra. 
+%      seletividade = vetor que contem a seletividade de cada amostra.
 %      sensibilidade = sensibilidade do modelo.
-%      sen_analitica = sensibilidade analítica do modelos;
+%      sen_analitica = sensibilidade analatica do modelos;
 %      ruido = ruido espectral
-%      sinal_ruido = razão sinal ruído.
-%      LD = limite de detecção do modelo.
-%      LQ = limite de quantificação.
-%      
+%      sinal_ruido = razao sinal ruido.
+%      LD = limite de deteccao do modelo.
+%      LQ = limite de quantificacao.
+%
 %---------------------------------------------------------------------------------------------
 
-[Xcal,para1,para2]=pretreat(Xcal,'center');   
+[Xcal,para1,para2]=pretreat(Xcal,'center');
 
 x  = Xcal;
 y  = ycal;
@@ -58,17 +58,17 @@ for i=1:L1
     sel=nnas_cm./norm(x(i,:));
 end
 
-xp=T*P'; 
+xp=T*P';
 xpm=xp+ones(size(x,1),1)*mx;
 er=x-xpm;
 va=var(er);
-vva=mean(va); %média da variancia do ruido
+vva=mean(va); %media da variancia do ruido
 dx=sqrt(vva); % ruido espectral
 
 sr=nnas_cm./dx;
 
 %++++++++++ Sensibilidade analitica ++++++++++
-sena=sen/dx; %  (SENSIBILIDADE ANALÍTICA) = 410.5
+sena=sen/dx; %  (SENSIBILIDADE ANALATICA) = 410.5
 
 % Seletividade e Sensibilidade
 EParamenter.seletividade=sel;
@@ -79,8 +79,8 @@ EParamenter.inv_sen_analitiva = 1/EParamenter.sen_analitica;
 % Sinal Ruido
 EParamenter.ruido_espectral = dx;
 EParamenter.sinal_ruido = sr;
-if min(sr)<0; 
-EParamenter.sinal_ruido_min =0; 
+if min(sr)<0;
+EParamenter.sinal_ruido_min =0;
 else
 EParamenter.sinal_ruido_min = min(sr);
 end
@@ -98,53 +98,53 @@ modelo.EParamenter = EParamenter;
 % CENTER;
 function [cdata,me,cnewdata]=center(data,opt,newdata)
 
-%#										
-%#  function [cdata,me,ctest]=center(data,opt,newdata);			
-%#										
-%#  AIM: 	Centering along columns, rows or double centering		
-%#										
-%#  PRINCIPLE:  Removal of the column-, row- or overall mean from 		
-%#              each column, row or both, respectively 		 		
-%# 				 If a test data set is available it can ONLY be 
+%#
+%#  function [cdata,me,ctest]=center(data,opt,newdata);
+%#
+%#  AIM: 	Centering along columns, rows or double centering
+%#
+%#  PRINCIPLE:  Removal of the column-, row- or overall mean from
+%#              each column, row or both, respectively
+%# 				 If a test data set is available it can ONLY be
 %#              column centered using the mean from the calibration
 %#              data set.
 %#
 %#
-%#  INPUT:	data: (m x n) matrix with m rows and n variables		
-%#				opt: optional							
-%#		     1 = column centering					
-%#		     2 = row centering						
-%#		     3 = double centering					
+%#  INPUT:	data: (m x n) matrix with m rows and n variables
+%#				opt: optional
+%#		     1 = column centering
+%#		     2 = row centering
+%#		     3 = double centering
 %#          newdata: (mt x n) test matrix with mt rows and n variables
-%#					
-%#			 							
-%#  OUTPUT:	cdata: (m x n) matrix containing centered data			
+%#
+%#
+%#  OUTPUT:	cdata: (m x n) matrix containing centered data
 %#				me: mean vector, overall mean (scalar)
 %#              newdata: (mt*n) test matrix centered with the mean of data
-%#	
-%#										
-%#  AUTHOR: 	Andrea Candolfi				 			
-%#	    			Copyright(c) 1997 for ChemoAc					
-%#          	FABI, Vrije Universiteit Brussel            			
-%#          	Laarbeeklaan 103 1090 Jette					
-%#   										
-%# VERSION: 1.2 (25/02/2002)							
-%#										
-%#  TEST:   	I. Stanimirova	& S. Gourvénec & M. Zhang
-%#										
-	
+%#
+%#
+%#  AUTHOR: 	Andrea Candolfi
+%#	    			Copyright(c) 1997 for ChemoAc
+%#          	FABI, Vrije Universiteit Brussel
+%#          	Laarbeeklaan 103 1090 Jette
+%#
+%# VERSION: 1.2 (25/02/2002)
+%#
+%#  TEST:   	I. Stanimirova	& S. Gourvï¿½nec & M. Zhang
+%#
+
 
 [m,n]=size(data);
 
 if nargin==1;
   opt=[4];
-  while opt>3 || opt<=0 
+  while opt>3 || opt<=0
     opt=input('column centering(1), row centering(2), double centering(3):');
   end
 end
 
 
-if opt==1			% column centering 
+if opt==1			% column centering
    me=mean(data);
    cdata=data-ones(m,1)*me;
 end
@@ -163,12 +163,12 @@ end
 
 if exist('newdata')==1			% center new data
     [mt,n]=size(newdata);
-    
-    if opt==1				% column centering 
+
+    if opt==1				% column centering
         me=mean(data);
         cnewdata=newdata-ones(mt,1)*me;
     else
         error('Row centering and double centering are impossible to perform on a test set');
     end
-    
+
 end

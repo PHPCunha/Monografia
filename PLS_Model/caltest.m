@@ -1,15 +1,15 @@
 function [objetos,Xcal,Xtest,ycal,ytest]=caltest(X,y,ncal,alg,rep,method)
-% algoritmo para selecionar amostras de calibração e teste.
+% algoritmo para selecionar amostras de calibracao e teste.
 %      X : matriz de dados espectrais;
-%      y : vetor contendo a propriedade de interesse; caso não tenha,
-%      utilize []; O vetor y é utilizado para verificação das réplicas.
+%      y : vetor contendo a propriedade de interesse; caso nao tenha,
+%      utilize []; O vetor y e utilizado para verificacao das replicas.
 %   ncal : percentagem de amostras de treinamento; default: 70;
-%    alg : tipo de algoritmo a ser utilizado para separação dos dados:
+%    alg : tipo de algoritmo a ser utilizado para separacao dos dados:
 %    kenston('k'); duplex('d') ou segmentado (s); default: 'k'
-%    rep : verificação de réplicas: não (0); sim (1); default: 0
-% method : método de pre-processamento dos dados antes da separação dos 
-%conjuntos de calibração e teste; default: 'none'.
-% 
+%    rep : verificacao de replicas: nao (0); sim (1); default: 0
+% method : metodo de pre-processamento dos dados antes da separacao dos
+%conjuntos de calibracao e teste; default: 'none'.
+%
 % exemplos:
 % [objetos,Xcal,Xtest,ycal,ytest]=caltest(X,y,70,'k',1,{'none'});
 % [objetos,Xcal,Xtest,ycal,ytest]=caltest(X,y,60,'d',0,{'center'});
@@ -18,7 +18,7 @@ function [objetos,Xcal,Xtest,ycal,ytest]=caltest(X,y,ncal,alg,rep,method)
 % [objetos,Xcal,Xtest,ycal,ytest]=caltest(X,y,70);
 %
 % Paulo R. Filgueiras  - 13/08/2014
-% 
+%
 
 if nargin==5,        method={'none'};
 elseif nargin==4,    method={'none'};    rep=0;
@@ -32,7 +32,7 @@ end
 % pre-processamento dos esepctros.
 X2=pretrat(X,[],method);
 
-% verificação das réplicas a partir do vetor y
+% verificacao das replicas a partir do vetor y
 if rep~=0
     y2.sample=[];y2.sample=[y2.sample;1];
     y2.numero=[];
@@ -44,38 +44,38 @@ if rep~=0
         end
     end
     aa2=y2.sample(2:end)-1;aa2=[aa2;y2.numero];
-    y2.sample=[y2.sample,aa2,aa2-y2.sample+1];  % vetor com as posições iniciais e finais para as réplicas.
+    y2.sample=[y2.sample,aa2,aa2-y2.sample+1];  % vetor com as posicoes iniciais e finais para as replicas.
     clear aa2 ki
-    % Calculando a média espectral 
+    % Calculando a media espectral
     y2.medioX=[];y2.medioy=[];
     for ki=1:size(y2.sample,1)
         posicao_medio = y2.sample(ki,1):y2.sample(ki,2);
         matriz_medio = mean(X2(posicao_medio,:));
-        y2.medioX=[y2.medioX;matriz_medio];       % matriz com os espectros médios.
-        y2.medioy=[y2.medioy;y(y2.sample(ki,1))]; % vetor com os espectros médios.
+        y2.medioX=[y2.medioX;matriz_medio];       % matriz com os espectros medios.
+        y2.medioy=[y2.medioy;y(y2.sample(ki,1))]; % vetor com os espectros medios.
     end
 else
     y2.medioX=X2;
     y2.medioy=y;
 end
-  
-%  alg : tipo de algoritmo a ser utilizado para separação dos dados:   
+
+%  alg : tipo de algoritmo a ser utilizado para separacao dos dados:
 if strcmp(alg,'k')
     ncal=round(ncal*size(y2.medioX,1)/100);
-    objetos2=kenston(y2.medioX,ncal,1,0,y2.medioy); % não gera gráfico de saída
+    objetos2=kenston(y2.medioX,ncal,1,0,y2.medioy); % nao gera grafico de saida
     objetos2=sort(objetos2); objetos2=objetos2';
 elseif strcmp(alg,'d')
     ncal=round(ncal*size(y2.medioX,1)/100);
     objetos2=duplex(y2.medioX,size(y2.medioy,1)-ncal);
     objetos2=sort(objetos2);
 elseif strcmp(alg,'s')
-    aa2=repmat((1:ncal)',size(y2.medioy,1),1); aa2=aa2(1:size(y2.medioy,1)); 
+    aa2=repmat((1:ncal)',size(y2.medioy,1),1); aa2=aa2(1:size(y2.medioy,1));
     objetos2=find(aa2~=1);
 end
 teste2=setxor(1:size(y2.medioy,1),objetos2);
 clear aa2
 
-% verificação das réplicas a partir do vetor y para saida das amostras
+% verificacao das replicas a partir do vetor y para saida das amostras
 if rep~=0
     objetos3=[];
     for ki=1:length(objetos2)
@@ -87,7 +87,7 @@ if rep~=0
     Xcal=X(objetosk,:);
     Xtest=X(teste2,:);
     ycal=y(objetosk,:);
-    ytest=y(teste2,:);    
+    ytest=y(teste2,:);
 else
     objetosk=objetos2;
     Xcal=X(objetos2,:);
@@ -100,38 +100,38 @@ objetos.test=teste2;
 objetos.dados=y2;
 
 function [object,xm,ym,xt,yt]=kenston(x,no_p,men,pl,y)
-%#									
-%#  function [object,xm,ym,xt,yt]=kenston(x,no_p,men,pl,y)				
-%#									
-%#  AIM: 	Kennard-Stone design (e.g. for subset selection).	
-%#									
-%#  PRINCIPLE:  Based on Computer Aided Design of Experiments. 		
-%#		The first point can be the mean or the furthest from 	
-%#		the mean.						
-%# 		REF :   R. W. Kennard and L. A. Stone			
-%# 			Technometrics Vol. 11, No. 1, 1969 		
-%# 									
-%#  INPUT:	x :  (n x m) absorbent matrix with n spectra		
-%#			 and m variables				
-%#		no_p : number of objects to be selected			
-%#		men: position of the first point selected		
-%#		     (1 closest to mean; 0 furthest from mean)		
-%#		pl: 1 plot; 0 no plot					
-%#		y: matrix of responses							
-%#  OUTPUT:	object : (1 x no_p) the vector of designed objects	
-%#																	
-%#  AUTHOR: 	Wen Wu 							
-%#	    	Copyright(c) 1997 for ChemoAC				
-%#          	FABI, Vrije Universiteit Brussel            		
-%#          	Laarbeeklaan 103 1090 Jette				
-%#    	    								
-%# VERSION: 1.1 (28/02/1998)						
-%#									
-%#  TEST:   	Roy De Maesschalck					
+%#
+%#  function [object,xm,ym,xt,yt]=kenston(x,no_p,men,pl,y)
+%#
+%#  AIM: 	Kennard-Stone design (e.g. for subset selection).
+%#
+%#  PRINCIPLE:  Based on Computer Aided Design of Experiments.
+%#		The first point can be the mean or the furthest from
+%#		the mean.
+%# 		REF :   R. W. Kennard and L. A. Stone
+%# 			Technometrics Vol. 11, No. 1, 1969
+%#
+%#  INPUT:	x :  (n x m) absorbent matrix with n spectra
+%#			 and m variables
+%#		no_p : number of objects to be selected
+%#		men: position of the first point selected
+%#		     (1 closest to mean; 0 furthest from mean)
+%#		pl: 1 plot; 0 no plot
+%#		y: matrix of responses
+%#  OUTPUT:	object : (1 x no_p) the vector of designed objects
+%#
+%#  AUTHOR: 	Wen Wu
+%#	    	Copyright(c) 1997 for ChemoAC
+%#          	FABI, Vrije Universiteit Brussel
+%#          	Laarbeeklaan 103 1090 Jette
+%#
+%# VERSION: 1.1 (28/02/1998)
+%#
+%#  TEST:   	Roy De Maesschalck
 % Exemplo
-%#	[object,Xcal,ycal,Xtest,ytest]=kenston(xsnv,30,1,1,y);								
+%#	[object,Xcal,ycal,Xtest,ytest]=kenston(xsnv,30,1,1,y);
 
-[n,m]=size(x);	
+[n,m]=size(x);
 t=x;
 
 % Kennard and Stone method to select objects
@@ -139,7 +139,7 @@ t=x;
 	meant=mean(t);
 	t1=t-ones(n,1)*meant;
         for i=1:n
-	    a(i)=t1(i,:)*t1(i,:)'; 
+	    a(i)=t1(i,:)*t1(i,:)';
 	end %i
 	if men==1,
 		[b,c]=min(a);
@@ -157,7 +157,7 @@ t=x;
 	[b,c]=max(a);
 	object(2)=c;
 	clear a b c t1
-	
+
   % k+1 point
 	for pi=3:no_p
 	    list=1:n;
@@ -193,7 +193,7 @@ if pl==1
 	hold off
 	xlabel('Variable 1')
 	ylabel('Variable 2')
-   end 
+   end
    if b==1
 	plot(t(:,1),t(:,1),'.')
 	for i=1:n
@@ -204,8 +204,8 @@ if pl==1
 	hold off
 	xlabel('Variable 1')
 	ylabel('Variable 1')
-   end 
-end                    
+   end
+end
 xm=x(object,:);
 ym=y(object,:);
 ind=[1:n]';
@@ -223,24 +223,24 @@ function [model,test]=duplex(X,k)
 % -------------------------------------------------------------------------
 % Input:
 % X, matrix (n,p), predictor variables in columns
-% k, number of objects to be selected to test set, (test set can contain 
-% at most 0.5n objects. If less objest are selected to test set, than k 
+% k, number of objects to be selected to test set, (test set can contain
+% at most 0.5n objects. If less objest are selected to test set, than k
 % first objects of the model and test sets are designed uniformly and the
-% remaining objects not selected by Duplex algorithm are included 
+% remaining objects not selected by Duplex algorithm are included
 % into model set)
 % -------------------------------------------------------------------------
 % Output:
 % model, vector (k+(n-k),1), list of objects selected to model set
 % test, vector (k,1), list of objects selected to test set (optionally)
 % -----------------------------------------------------------------------
-% Example: 
+% Example:
 % [model,test]=duplex(X,10)
 % -----------------------------------------------------------------------
 % Reference:
 % R.D. Snee, Technometrics 19 (1977) 415-428
 
 % Written by Michal Daszykowski
-% Department of Chemometrics, Institute of Chemistry, 
+% Department of Chemometrics, Institute of Chemistry,
 % The University of Silesia
 % December 2004
 
@@ -267,14 +267,14 @@ test=x([i1 i2],1);
 x([i1 i2],:)=[];
 
 
-h=waitbar(0,'Please wait ...'); 
+h=waitbar(0,'Please wait ...');
 h=waitbar(0/k,h);
 iter=2;
 
 while length(model)<k
     [ii,ww]=max(min(fastdist(x(:,2:n),X(model,:))));
     model=[model;x(ww,1)];
-    x(ww,:)=[]; 
+    x(ww,:)=[];
     [ii,ww]=max(min(fastdist(x(:,2:n),X(test,:))));
     test=[test;x(ww,1)];
     x(ww,:)=[];
@@ -285,7 +285,7 @@ end
 if ~isempty(x);
     model=[model;x(:,1)];
 end
-    
+
 close(h);
 
 function D=fastdist(x,y)

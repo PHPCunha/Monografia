@@ -28,7 +28,7 @@ pkg load io
 % Vamos mudar o Diretorio para onde colocamos os dados do IFES-Ciencia
 % {Lembre-se de substituir o diretorio dentro do comando "cd" pelo diretorio
 % correto.}
-cd('...\IFES Ciencia\PLS_Model');
+cd('C:\Users\Exemplo\...\Monografia\PLS_Model');
 
 load('Dados_API.mat')
 
@@ -48,7 +48,7 @@ Xtest = Xmir(objetos.test,:); ytest = y(objetos.test,:);
 % calculos da forma desejada.
 options=[];
 options.Xpretreat      = {'center'};
-% Pretratamento da matriz Xcal;
+% Pre-tratamento da matriz Xcal;
 % ycal sempre centralizado;
 
 options.vene           = 5;
@@ -102,19 +102,16 @@ modelo.R2p;   % 0.9440
 
 options.vl             = 5;
 modelo = plsmodel2(Xcal,ycal,Xtest,ytest,options);
-
-modelo.RMSEC; % 2.0730
-modelo.RMSEP; % 1.7584
 modelo.R2c;   % 0.9537
-modelo.R2p;   % 0.9500
+modelo.R2p    % 0.9500
 
 options.vl             = 6;
 modelo = plsmodel2(Xcal,ycal,Xtest,ytest,options);
 
-modelo.RMSEC; % 1.9061
-modelo.RMSEP; % 1.4480
-modelo.R2c;   % 0.9614
-modelo.R2p;   % 0.9582
+modelo.RMSEC % 1.9061
+modelo.RMSEP % 1.4480
+modelo.R2c   % 0.9614
+modelo.R2p   % 0.9582
 
 % Com base nos parametros de avalicao podemos dizer que o melhor modelo e o
 % com seis variaveis latentes, devido a ambos os RMSE serem menores e ambos
@@ -191,20 +188,26 @@ ylabel('Predicted','fontsize',12);
 % Neste caso iremos usar estes padroes.
 tic
 [pvalue,dist_tt,meandiff] = accuracy_test(modelo4.Ytest(:,1),modelo4.Ytest(:,2),modelo6.Ytest(:,2),'randbi',500000,0.05);
-toc  %{892 sec_Pedro 495 sec_Pedro2}
+toc  %{1068 sec}
 % Esta demorando? Nao se preocupe, costuma demorar mesmo.
 
 % Tem duas formas de avaliar se os modelos sao diferentes;
 % 1- Pela resposta da funcao, que caso sejam diferentes dara
-% "Modelos com DIFEREN�AS na acur�cia".
+% "Modelos com DIFERENCAS na acuracia".
 % 2- Comparar o valor do pvalue obtido com o alpha utilizado, caso o pvalue
 % seja menor, os modelos tem diferenca estatistica e o modelo com 6 VL e
 % melhor.
 
-% Assim, temos duas confirmacoes que o modelo com 6 variaveis latentes �
+% Assim, temos duas confirmacoes que o modelo com 6 variaveis latentes e
 % melhor que o modelo 4. Mas, isso e so o comeco e nem de longe o melhor
-% modelos que podemos alcancar.
+% modelos que podemos alcancar, mas antes de encerrar o tutorial, vamos salvar
+% os dados
 
+save("Parte 01")
+
+% Neste comando salvamos todos arquivos internos do "Ambiente de Trabalho" em um
+% unico arquivo '.mat'. Nesse modo, caso queiremos retomar o tutorial poderemos
+% sem precisar refazer tudo de novo.
 _______________________________________________________________________________
 
 %%
@@ -213,27 +216,28 @@ _______________________________________________________________________________
 % Como visto na licao anterior, o PLS nao obteve um modelo bom em
 % comparacao com o encontrado na literatura, entretanto, ainda nao
 % extrairmos o maior potencial desta tecnica, porque podemos aplicar
-% tecnicas de aperfeicoamento, como pretratamento, selecao de varaiveis e
+% tecnicas de aperfeicoamento, como pre-tratamento, selecao de varaiveis e
 % deteccao de outlier.
 % Entao, vamos abordar alguma dessas tecnicas.
 
 % Antes de comecar vamos deletar os dados da rotina anterior que nao
-% usaremos.
+% usaremos. Caso você não tenha salvo, ou esteja no seu Ambiente de Trabalho,
+% terá que refazer da linha 15 a 48.
 
 clearvars -except ycal ytest Xcal Xtest objetos Nmir
 % Este comando 'clearvars -except' deleta tudo exceto os arquivos citados
 % em seguencia.
 
-%% - Pretratamento,
-% O Pretratamento, ou preprocessamento, tratase de uma modificavao da fonte
+%% - Pre-tratamento,
+% O Pre-tratamento, ou preprocessamento, tratase de uma modificavao da fonte
 % analitica visando facilitar, ou aperfeicoar, a modelagem. Existem
-% pretratamento que consideram somente a amostra isolada e que consideram a
+% pre-tratamento que consideram somente a amostra isolada e que consideram a
 % faixa da fonte analitica. Todavia, tem que tomar cuidado ao aplicar o
-% pretratamento, pois ao mesmo tempo que tu remove ruido tu pode acabar
+% pre-tratamento, pois ao mesmo tempo que tu remove ruido tu pode acabar
 % removendo informacao.
 
-% Para fazer o pretratamento, utilizaremos o funcao pretrata, que nos
-% fornece os seguintes pretratamentos.
+% Para fazer o pre-tratamento, utilizaremos o funcao pretrat, que nos
+% fornece os seguintes pre-tratamentos.
 % {'center'}         Centralizacao na media.
 % {'auto'}           Autoescalonamento dos dados
 % {'snv'}            Variacao padrao normal.
@@ -243,7 +247,7 @@ clearvars -except ycal ytest Xcal Xtest objetos Nmir
 %[Xp,Xtp]=pretrat(X,Xt,{'auto'});
 
 [Xcal2,Xtest2]=pretrat(Xcal,Xtest,{'auto'});
-% Voce deve escolher muito bem o pretratamento utilizado, pois caso utilize
+% Voce deve escolher muito bem o pre-tratamento utilizado, pois caso utilize
 % da forma incorreta podera esconder informacao e destacar desinformacao,
 % prejudicando o modelo assim.
 
@@ -277,7 +281,7 @@ plot(Nmir,Xcal2);
 % Eu, costumeiramente utilizo a seguinte configuracao.
 % 15 Jenelas, 2 Grau de Polinomio, 1 Derivada
 
-% Esta funcao, pretrat, foi desenvolvida para aplicar o mesmo pretratamento
+% Esta funcao, pretrat, foi desenvolvida para aplicar o mesmo pre-tratamento
 % em dois espectros ao mesmo tempo, um de calibracao e outro teste,
 % todavia, tu pode fazer uma 'jogada' para somente tratar um espectro.
 
@@ -292,7 +296,7 @@ plot(Nmir,Xcal);
 subplot(2,1,2)
 plot(Nmir,Xcal2);
 
-% Nessa comparacao podemos ver que o pretratamento destacou as principais
+% Nessa comparacao podemos ver que o pre-tratamento destacou as principais
 % bandas do espectro e suavizou a area de ruido. Sera que essa mudanca
 % melhorou o nosso modelo? Vamos testar.
 
@@ -327,8 +331,8 @@ modelo8 = plsmodel2(Xcal2,ycal,Xtest2,ytest,options);
 
 clear modelo8 %Excluindo para nao atrapalhar comparacoes futuras.
 
-% Nao precisamos nos limitar a usar somente um pretratamento, podemos
-% combinar pretratamentos.
+% Nao precisamos nos limitar a usar somente um pre-tratamento, podemos
+% combinar pre-tratamentos.
 
 [Xcal2,Xtest2]=pretrat(Xcal,Xtest,{'deriv',[15,2,1]});
 [Xcal2,Xtest2]=pretrat(Xcal2,Xtest2,{'msc'});
@@ -352,7 +356,7 @@ modelo9 = plsmodel2(Xcal2,ycal,Xtest2,ytest,options);
 %R2c      0.9532    0.9923
 %R2p      0.9759    0.9816
 
-% Ao olhar os parametros de avaliacao, podemos concluir que o pretratamento
+% Ao olhar os parametros de avaliacao, podemos concluir que o pre-tratamento
 % duplo e com 9 VL e o melhor modelo, todavia so podemos confirmar isso
 % apos uma avaliacao minuciosa.
 
@@ -366,8 +370,8 @@ plot(modelo6.Ytest(:,1),modelo6.Ytest(:,2),'r*','LineWidth',1); hold on;
 ylim([5 65]); xlim([5 65]);
 plot(xlim, ylim, '--k');legend('Calibration','Prediction','Location','southeast');
 title('Modelo 6');
-set(gca,'FontSize',12);xlabel('Reference','fontsize',12);
-ylabel('Predicted','fontsize',12);
+set(gca,'FontSize',16);xlabel('Reference','fontsize',16);
+ylabel('Predicted','fontsize',14);
 
 subplot(2,1,2)
 plot(modelo9.Ycal(:,1),modelo9.Ycal(:,2),'bo','LineWidth',1); hold on;
@@ -375,8 +379,8 @@ plot(modelo9.Ytest(:,1),modelo9.Ytest(:,2),'r*','LineWidth',1); hold on;
 ylim([5 65]); xlim([5 65]);
 plot(xlim, ylim, '--k');legend('Calibration','Prediction','Location','southeast');
 title('Modelo 9');
-set(gca,'FontSize',12);xlabel('Reference','fontsize',12);
-ylabel('Predicted','fontsize',12);
+set(gca,'FontSize',16);xlabel('Reference','fontsize',16);
+ylabel('Predicted','fontsize',14);
 
 % Ao analisar os graficos, vemos que o modelo 9 conseguiu deixar as
 % amostras mais proximas da linha de referencia em toda a faixa da
@@ -389,7 +393,7 @@ tic
 toc %{875 sec_Pedro 496 sec_Pedro}
 
 % A acuracia de ambos modelos sao estatisticamente semelhantes, entao, nao
-% podemos afirmar que o modelo com duplo pretratamento e VL 9 e melhor
+% podemos afirmar que o modelo com duplo pre-tratamento e VL 9 e melhor
 % estatisticamente, mas podemos escolhelo como melhor modelo do conjunto.
 
 %% - Deteccao de Outlier
@@ -431,6 +435,7 @@ figure(1)
 plot(1:1:size(modelo9.lev_res.lev_cal,1),modelo9.lev_res.lev_cal,'bo'); hold on;
 plot(1:1:size(modelo9.lev_res.lev_test,1),modelo9.lev_res.lev_test,'r*'); hold on;
 hline(modelo9.lev_res.lev_limite,'k');
+set(gca,'FontSize',16);
 title('Leverage');
 
 % No grafico podemos perceber que tem seis amostras que apresentam alta
@@ -447,7 +452,7 @@ end
 for qi=1:1:size(modelo9.lev_res.res_test,1);%qi=1
 plot(ytest(qi),modelo9.lev_res.res_test2(qi),'r*'); hold on;
 end
-title('Residue')
+title('Residue');set(gca,'FontSize',16);
 hline(0,'k:');
 
 % Quando analisamos o grafico de residuo nao reparamos em nenhuma tedencia,
@@ -476,11 +481,10 @@ legend('off')
 % x = 0.274 / 0.278 / 0.338
 % y = 2.657 / 2.693 / 2.933
 
-A = find( 0.273 < modelo6.lev_res.lev_cal)
-% Com esta funcao encontraremos a amostra com leverage em calibracao maior
-% que 0.273. Amostra numero 25,31 e 56. Como se trata de amostras no conjunto
-% calibracao, teremos que refazer todo o processo de otimizacao e previsao.
-% Removendo as amostras da calibracao.
+A = modelo6.lev_res.Sample_cal
+% Ao utilizar este comando, sabemos quais são as amostras do conjunto calibracao
+% que foram para o primeiro quadrante. Como ao amostras de calibracao, teremos
+% que refazer o PLS do começo, começando removendo as amsotras.
 
 Xcal_2 = Xcal; ycal_2 = ycal;
 Xcal_2(A,:) = []; ycal_2(A,:) = [];
@@ -488,19 +492,19 @@ Xcal_2(A,:) = []; ycal_2(A,:) = [];
 % remover uma amostra, simplesmente crie uma copia e adicionar "_2" no
 % nome, para nao ter confusao.
 
-% Pretratamento
+% Pre-tratamento
 [Xcal2_2,Xtest2]=pretrat(Xcal_2,Xtest,{'deriv',[15,2,1]});
 
 % Preprando o PLS
 options=[];
 options.Xpretreat      = {'center'};
-options.vene           = 20;
+options.vene           = 5;
 options.vl             = 20;
 modelo6_2=plsmodel2(Xcal2_2,ycal_2,options);
 
 % Escolhendo VL = 7, como melhor.
 options.vl             = 7;
-modelo6_2=plsmodel2(Xcal2_2,ycal_2,Xtest2,ytest,options);
+modelo6_7=plsmodel2(Xcal2_2,ycal_2,Xtest2,ytest,options);
 
 %Outlier   Com       Sem
 %VL         6         7
@@ -511,15 +515,9 @@ modelo6_2=plsmodel2(Xcal2_2,ycal_2,Xtest2,ytest,options);
 
 % Pelos parametros de avalicao os modelos nao tiveram uma grande diferenca.
 % Vamos utilizar o teste da acuracia e verificar se tem diferenca
-% significativa.
+% significativa. A diferenca nao foi significativa.
 
-tic
-[pvalue,dist_tt,meandiff] = accuracy_test(ytest,modelo6.Ytest(:,2),modelo6_2.Ytest(:,2),'randbi',500000,0.05);
-toc {868 seg_Pedro}
-
-% A diferenca nao foi significativa, vamos para o teste do lev_res.
-
-modelo6_2 = lev_res(modelo6_2,Xcal2_2,ycal_2,Xtest2,ytest);
+modelo6_7 = lev_res(modelo6_7,Xcal2_2,ycal_2,Xtest2,ytest);
 legend('off')
 
 % Dessa vez uma amostra de teste foi indetificada com indicio de ser
@@ -527,7 +525,7 @@ legend('off')
 % outro. Vamos remover essa amostra teste e fazer, somente, a parte do
 % teste.
 
-A = find( 4 < modelo6_2.lev_res.res_test);
+A = modelo6_7.lev_res.Sample_test
 % Encontando a amostra teste. Amostra 9.
 
 Xtest_2 = Xtest; ytest_2 = ytest;
@@ -536,7 +534,7 @@ Xtest_2(9,:) = []; ytest_2(9,:) = [];
 
 [Xcal2_2,Xtest2_2]=pretrat(Xcal_2,Xtest_2,{'deriv',[15,2,1]});
 options.vl             = 7;
-modelo6_2=plsmodel2(Xcal2_2,ycal_2,Xtest2_2,ytest_2,options);
+modelo6_7=plsmodel2(Xcal2_2,ycal_2,Xtest2_2,ytest_2,options);
 % Refazendo o modelo.
 
 %Outlier   Com       Sem
@@ -550,7 +548,7 @@ modelo6_2=plsmodel2(Xcal2_2,ycal_2,Xtest2_2,ytest_2,options);
 % teste.
 
 tic
-[pvalue,dist_tt,meandiff] = accuracy_test(ytest,modelo6.Ytest(:,2),modelo6_2.Ytest(:,2),'randbi',500000,0.05);
+[pvalue,dist_tt,meandiff] = accuracy_test(ytest,modelo6.Ytest(:,2),modelo6_7.Ytest(:,2),'randbi',500000,0.05);
 toc
 
 % Note que dara um erro, o teste de acuracia so funciona quando o conjunto
@@ -567,7 +565,7 @@ legend('off')
 % Agora nao temos nenhum amostra anomola.
 
 %% Selecao de Variaveis
-% O aperfei�oamento por Selecao de Variaveis pode ser realizado por
+% O aperfeicoamento por Selecao de Variaveis pode ser realizado por
 % diversas tecnicas, o seu foco e conseguir selecionar as variaveis da
 % fonte analitica que tem as informacoes mais importantes para o modelo e
 % como consequencia, remover variaveis com pouca, ou nenhuma, informacao,
@@ -591,10 +589,9 @@ close all;
 pkg load statistics
 pkg load io
 
-cd('C:\Users\Pedro\OneDrive - aluno.ufes.br\Quimiometria\IFES Ciencia\PLS_Model');
-%cd('...\IFES Ciencia\PLS_Model');
+cd('C:\Users\Exemplo\...\Monografia\PLS_Model');
 % Como extrair dados de planilha excel.
-[y,~,~]=xlsread('Oleos_Adulterados.xlsx','Plan1','B2:B230');
+[y,~,~]=xlsread('Oleos_Adulterados.xlsx','Plan1','B2:B230'); % Vetor de regress�o
 %[A,B,C]=xlsread('XXX','YYY','ZZZ');
 % A funcao xlsread e utilizada para extrair informacao de planilhas como
 % xls, xlsx e csv.
@@ -623,6 +620,9 @@ cd('C:\Users\Pedro\OneDrive - aluno.ufes.br\Quimiometria\IFES Ciencia\PLS_Model'
 % espectro.
 
 plot(num,X);
+title('Espectros Puro')
+set(gca,'FontSize',16);
+xlim([890 1700]);ylim([0.55 1.3]);
 
 % Note que temos uma amostra anomala no conjunto, nitidamente ela nao tem o
 % mesmo perfil espectroscopico das demais amostras, assim, e interessante
@@ -631,7 +631,7 @@ plot(num,X);
 AAA= find(X(:,1) > 1);
 X(AAA,:) = []; y(AAA,:) = [];
 
-%% Separacao Cal Test
+% Separacao Cal Test
 % Agora vamos aprender a separar as amostras em conjunto calibracao e
 % teste, que ate entao, as amostras ja vinham separadas corretamente.
 
@@ -648,7 +648,7 @@ X(AAA,:) = []; y(AAA,:) = [];
 % ZZZ = Percentagem que deve esta no conjunto calibracao. (Recomendo 70)
 % WWW = Algoritmo desejado. (Recomendo 'k' kenston)
 % VVV = Checar repeticao. (0 = Sem checagem 1 = Com checagem)
-% UUU = Metodo de pretratamento utilizado antes da separacao. (Recomendo
+% UUU = Metodo de pre-tratamento utilizado antes da separacao. (Recomendo
 % 'none')
 % OUTPUT:
 % A = Objetos, conjunto estrutural com os dados da separacao. (Recomendo
@@ -672,7 +672,7 @@ plot(1:1:size(ytest,1),ytest,'r*'); hold on;
 
 Sample([1 2 3],:) % Para ver o nome das primeiras amostras.
 
-% Vemos que as 3 primeiras amostras s�o triplicatas nao reais, entao, por
+% Vemos que as 3 primeiras amostras sao triplicatas nao reais, entao, por
 % REGRA, elas tem que estar no mesmo conjunto, seja calibracao, seja teste.
 % O que nao ocorre quando analisamos o objetos;
 
@@ -712,7 +712,7 @@ plot(1:1:size(ytest,1),ytest,'r*'); hold on;
 % Note que esta separacao segue todos pre-requisitos citados. Agora vamos
 % para a modelagem.
 
-%% Modelando
+% Modelando
 
 close all
 options=[];
@@ -757,17 +757,7 @@ modelo15=eparamenter(modelo15,Xcal,Xtest,ycal,ytest);
 
 % Note que ao analisar o LD o modelo com 9 variveis latentes demonstrou um
 % resultado melhor, entao neste caso o melhor modelo seria o VL 9.
-% Todavia, tem dois testes que ainda precisamos fazer para aprovar este
-% modelo.
-
-%Teste de bias
-modelo9.bias.c=bias_teste(ycal,modelo9.Ycal(:,2),0.05);
-modelo9.bias.p=bias_teste(ytest,modelo9.Ytest(:,2),0.05);
-
-% O teste de Bias visa analisar erros sistem�ticos no modelo, caso tenha
-% erro, o modelo deve ser descartado e um com menos VL deve ser feito
-% (Cuidado). Aqui no caso o nosso modelo foi aprovado, todavia, esta longe
-% de ser o melhor modelo.
+% Agora vamos analisar o gr�fico de medido e predito.
 
 % Analisando o medido de previsto.
 
@@ -787,46 +777,14 @@ ylabel('Predicted','fontsize',12);
 % Vamos testar Outlier...
 
 modelo9 = lev_res(modelo9,Xcal,ycal,Xtest,ytest);
-close all
 
-figure(1)
-plot(1:1:size(modelo9.lev_res.lev_cal,1),modelo9.lev_res.lev_cal,'bo'); hold on;
-plot(1:1:size(modelo9.lev_res.lev_test,1),modelo9.lev_res.lev_test,'r*'); hold on;
-hline(modelo9.lev_res.lev_limite,'k');
-title('Leverage');
-
-% Temos 10 amostras acima da linha limite, uma drasticamente afastada, um
-% forte indicio de outlier.
-
-figure(2)
-for qi=1:1:size(modelo9.lev_res.res_cal,1)
-plot(ycal(qi),modelo9.lev_res.res_cal2(qi),'bo'); hold on;
-end
-for qi=1:1:size(modelo9.lev_res.res_test,1);%qi=1
-plot(ytest(qi),modelo9.lev_res.res_test2(qi),'r*'); hold on;
-end
-title('Residue')
-hline(0,'k:');
-
-% Ignorando 4 amostras abaixo de -10, o residuo parece aumentar conforme a
-% concentracao aumenta, isso pode ser ou um erro de tendencia ou devido o
-% aumento da percentagem de oleo.
-
-figure(3);
-modelo9 = lev_res(modelo9,Xcal,ycal,Xtest,ytest);
-
-% Como suspeito, temos 3 amostras que podem ser consideradas outlier, ambas
+% Como suspeitado, temos 4 amostras que podem ser consideradas outlier, ambas
 % no conjunto teste, vamos remove-las e ver como fica nosso modelo.
 
-A = find( 0.2750 < modelo9.lev_res.lev_test);  Procurando amostras teste
-% com leverage acima de 0.2824. Note que peguamos 4 amostras, sendo so tres
-% sao outlier, isso ocorre porque tem um nao outlier que se encontra na
-% faixa que escolhemos. Entao, temos que utilizar 2 condicoes para
-% encontralo com precisao.
+A = modelo9.lev_res.Sample_test;
+Xtest_2 = Xtest; ytest_2 = ytest;
+Xtest_2(A,:) = []; ytest_2(A,:) = [];
 
-A = find( 0.2750 < modelo9.lev_res.lev_test & 11.13< modelo9.lev_res.res_test)
-
-% Agora sim, os 3 outliers. [5,47,54]
 % Como se trata de suspeita de outlier em conjunto test, refazemos s� a
 % parte do teste.
 
@@ -834,10 +792,10 @@ Xtest_2 = Xtest; ytest_2 = ytest;
 Xtest_2(A,:) = []; ytest_2(A,:) = [];
 
 options.vl             = 9;
-modelo9_2 = plsmodel2(Xcal,ycal,Xtest_2,ytest_2,options);
-modelo9_2 = eparamenter(modelo9_2,Xcal,Xtest,ycal,ytest);
+modelo9_9 = plsmodel2(Xcal,ycal,Xtest_2,ytest_2,options);
+modelo9_9 = eparamenter(modelo9_2,Xcal,Xtest,ycal,ytest);
 
-%VL          9        9_2
+%VL          9        9_9
 %RMSEC    4.1114    4.1114
 %RMSEP    5.5650    4.2089
 %R2c      0.9377    0.9377
@@ -847,20 +805,6 @@ modelo9_2 = eparamenter(modelo9_2,Xcal,Xtest,ycal,ytest);
 
 % Com estes parametros de avaliacao, podemos dizer que houve uma melhora no
 % modelo.
-
-%Teste de bias
-modelo9_2.bias.c=bias_teste(ycal,modelo9_2.Ycal(:,2),0.05);
-modelo9_2.bias.p=bias_teste(ytest_2,modelo9_2.Ytest(:,2),0.05);
-
-% Analisando o medido de previsto.
-
-plot(modelo9_2.Ycal(:,1),modelo9_2.Ycal(:,2),'bo','LineWidth',1); hold on;
-plot(modelo9_2.Ytest(:,1),modelo9_2.Ytest(:,2),'r*','LineWidth',1); hold on;
-ylim([0 65]); xlim([0 65]);
-plot(xlim, ylim, '--k');legend('Calibration','Prediction','Location','southeast');
-title('Modelo 9');
-set(gca,'FontSize',12);xlabel('Reference','fontsize',12);
-ylabel('Predicted','fontsize',12);
 
 % Analise de leverage e residue, nao precisa ser refeita porque so mexemos
 % com o teste, caso ocorrese uma exclusao de amostra de calibracao, todo o
@@ -880,19 +824,33 @@ ylabel('Predicted','fontsize',12);
 % a tentar encontra-los. O Gabarito se encontra no final desta rotina.
 
 %%
-_______________________________________________________________________________
-%%%%%%%%%%%%%% 00 - Edicao de figuras
-% Neste tutorial sera ensinado como editar configuracoes das imagens do
-% Octave.
-% {AINDA SERA FATO}
-
 %%
-%%%%%%%%%%%%%% 00 - Edicao de Figuras da Monografia.
 %%
-
 %%
-%%%%%%%%%%%%%% 00 - Conhecendo a funcao for
-
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
 %%
 %%%%%%%%%%%%%% 00 - Gabarito
 
@@ -909,22 +867,22 @@ _______________________________________________________________________________
 
 % 03
 
-%VL          XX
-%RMSEC      XXX
-%RMSEP      XXX
-%R2c        XXX
-%R2p        XXX
-%LD         XXX
-%LQ         XXX
-%Pret       XXX
+%VL          17
+%RMSEC        4
+%RMSEP        4
+%R2c     0,9561
+%R2p     0,8542
+%LD           5
+%LQ          17
+%Pret Deriv/Msc
 
 % 04
 
-%VL          XX
-%RMSEC      XXX
-%RMSEP      XXX
-%R2c        XXX
-%R2p        XXX
-%LD         XXX
-%LQ         XXX
-%Pret       XXX
+%VL           9
+%RMSEC   0.0457
+%RMSEP   0.0245
+%R2c     0.9070
+%R2p     0.9349
+%LD      0.0087
+%LQ      0.0289
+%Pret    Nenhum

@@ -42,7 +42,7 @@ n=length(diff);
 %niter=199;
 sum=0;
 dist_tt=[];
-if strcmp(teste,'randbi');   % teste ramd�mico bicaudal
+if strcmp(teste,'randbi');   % teste randomico bicaudal
 
 for k=1:niter
     randomsign=2*round(rand(n,1))-1;
@@ -64,15 +64,15 @@ xlabel('Distribuicao aleatoria','FontSize',24,'FontName','arial');
 
 if pvalue < alpha
     s = sprintf('tcal = %g < alpha = %g',pvalue,alpha); disp(s)
-    disp('Modelos com DIFERENCAS na acuracia')
+    disp('Modelos com DIFERENCAS na acuracia.')
     Resul = "Diferente";
 else
     s = sprintf('tcal = %g > alpha = %g',pvalue,alpha); disp(s)
-    disp('Modelos com acuracias iguais')
+    disp('Modelos com acuracias IGUAIS.')
     Resul = "Iguais";
 end
 
-elseif strcmp(teste,'randuni');    % teste ramd�mico unicaudal
+elseif strcmp(teste,'randuni');    % teste randomico unicaudal
 for k=1:niter
     randomsign=2*round(rand(n,1))-1;
     signeddiff=randomsign.*diff;
@@ -93,16 +93,16 @@ xlabel('Distribuicao aleatoria','FontSize',24,'FontName','arial');
 
 if pvalue < alpha
     s = sprintf('p-cal = %g < alpha = %g',pvalue,alpha); disp(s)
-    disp('Modelos com DIFERENCAS na acuracia')
+    disp('Modelos com DIFERENCAS na acuracia.')
     Resul = "Diferente";
 else
     s = sprintf('p-cal = %g > alpha = %g',pvalue,alpha); disp(s)
-    disp('Modelos com acuracias iguais')
+    disp('Modelos com acuracias IGUAIS.')
     Resul = "Iguais";
 end
 
 elseif strcmp(teste,'tpareado');
-% teste-t em para para m�dias (teste bicaudal)
+% teste-t em para medias (teste bicaudal)
 diff1 = eA-eB;
 meandiff1=mean(diff1);
 stddiff1=std(diff1);
@@ -114,12 +114,12 @@ disp(' Teste-t em para para medias ');
 
 if tcalc < tstat
     s = sprintf('tcal = %g < t-tabelado = %g',tcalc,tstat); disp(s)
-    disp('Modelos com acuracias iguais')
+    disp('Modelos com acuracias IGUAIS')
     s = sprintf('pvalor = %g',pvalue); disp(s)
     Resul = "Iguais";
 else
     s = sprintf('tcal = %g > t-tabelado = %g',tcalc,tstat); disp(s)
-    disp('Modelos com DIFERENCASAS na acuracia')
+    disp('Modelos com DIFERENCAS na acuracia')
     s = sprintf('pvalor = %g',pvalue); disp(s);
     Resul = "Diferente";
 end
