@@ -1,15 +1,13 @@
 % Rotina para desenvolvimento dos modelos de PLS utilizando dados continuos
 % e propriedades fisico-quimicas
-% Essa rotna esta dividida nas seguintes partes:
+% Essa rotina esta dividida nas seguintes partes:
 % 01 - Conhecendo o plsmodel
 % 02 - Aprimorando o modelo.
 % 03 - Exemplo real.
 % 04 - Praticando.
 
-% Extras:
-% 00 - Edicao de Figuras
-% 00 - Edicao de Figuras da Monografia.
-% 00 - Conhecendo a funcao for
+% Lembre-se o octave nao le acento e nem cedilha, por isso, teremos alguns erros
+% de português devido a ausência desses.
 
 ___________________________________________________________________________
 
@@ -52,7 +50,7 @@ options.Xpretreat      = {'center'};
 % ycal sempre centralizado;
 
 options.vene           = 5;
-% Tamanho da janela de validacao cruzada, recomanda-se 5;
+% Tamanho da janela de validacao cruzada, recomenda-se 5;
 
 options.vl             = 20;
 % Numero de variaveis latentes;
@@ -96,8 +94,8 @@ modelo.R2p;   % 0.9440
 % aperfeicoamentos.
 
 % Agora, para fins de teste, vamos testar outros VL. Eu recomendaria testar
-% o 5 e o 6, entretanto, tome cuidado ao escolher o VL, conforme tu
-% aumenta o numero de variaveis latentes menor tende a ficar o RMSEC e
+% o 5 e o 6, entretanto, tome cuidado ao escolher o VL, conforme aumenta o
+% numero de variaveis latentes menor tende a ficar o RMSEC e
 % maior tende a ficar o RMSEP, como explicado no artigo.
 
 options.vl             = 5;
@@ -156,12 +154,10 @@ title('Modelo 6');
 set(gca,'FontSize',12);xlabel('Reference','fontsize',12);
 ylabel('Predicted','fontsize',12);
 
-% Caso queira melhor compreender estes comandos leia o 00 - Edicao de figuras.
-
 % Para melhor avaliacao/comparacao, tente deixar os graficos na forma quadrada,
 % afinal, tanto eixo x e y tem a mesma dimensao.
 % Um grafico de medido e predito trata-se de uma comparacao sobre o real
-% valor de propriedade dependente (y) de uma amostra e o que foi previsto
+% valor de propriedade independente (y) de uma amostra e o que foi previsto
 % pelo modelo. Entao, quanto melhor o modelo, mais proxima a amostra fica
 % da linha de referencia.
 % Na comparacao dos graficos feitos com VL 4 e 6, percebe-se que tem pouca
@@ -169,14 +165,14 @@ ylabel('Predicted','fontsize',12);
 % 60. Todavia isso, ainda, nao e o suficiente para determinar que o modelo
 % 6 e realmente melhor.
 
-% Teste de Acuracia.
+% Teste de comparação
 
 % Depois, utilizamos o "accuracy_test" que e uma funcao de comparacao de
-% modelos multivariados, que utiliza testes randomicos, esta funcao ira
-% confirma se existe uma diferenca estatistica.
+% modelos multivariados, que utiliza teste randômico de exatidão, esta funcao
+% ira confirma se existe uma diferenca estatistica.
 
 %[pvalue,dist_tt,meandiff] = accuracy_test(yO,ypA,ypB,randuni,500000,0.05)
-% yO    ; Valor de refencia do y test.
+% yO    ; Valor de referencia do y test.
 % ypA   ; Valor de y test previsto pelo modelo A.
 % tpB   ; Valor de y test previsto pelo modelo B.
 % teste ; Tipo de teste, que pode ser:
@@ -216,8 +212,8 @@ _______________________________________________________________________________
 % Como visto na licao anterior, o PLS nao obteve um modelo bom em
 % comparacao com o encontrado na literatura, entretanto, ainda nao
 % extrairmos o maior potencial desta tecnica, porque podemos aplicar
-% tecnicas de aperfeicoamento, como pre-tratamento, selecao de varaiveis e
-% deteccao de outlier.
+% tecnicas de aperfeicoamento, como pre-tratamento e verificar a presenaça
+% de outlier.
 % Entao, vamos abordar alguma dessas tecnicas.
 
 % Antes de comecar vamos deletar os dados da rotina anterior que nao
@@ -228,13 +224,13 @@ clearvars -except ycal ytest Xcal Xtest objetos Nmir
 % Este comando 'clearvars -except' deleta tudo exceto os arquivos citados
 % em seguencia.
 
-%% - Pre-tratamento,
-% O Pre-tratamento, ou preprocessamento, tratase de uma modificavao da fonte
+%% Pre-tratamento,
+% O Pre-tratamento, ou pre-processamento, tratase de uma modificavao da fonte
 % analitica visando facilitar, ou aperfeicoar, a modelagem. Existem
-% pre-tratamento que consideram somente a amostra isolada e que consideram a
-% faixa da fonte analitica. Todavia, tem que tomar cuidado ao aplicar o
-% pre-tratamento, pois ao mesmo tempo que tu remove ruido tu pode acabar
-% removendo informacao.
+% pre-tratamento que consideram somente a amostra isolada e os que consideram a
+% variavel da fonte analitica. Todavia, tem que tomar cuidado ao aplicar o
+% pre-tratamento, pois ao mesmo tempo que é removido um ruído, pode-se acabar
+% removendo informação que é importante para o modelo.
 
 % Para fazer o pre-tratamento, utilizaremos o funcao pretrat, que nos
 % fornece os seguintes pre-tratamentos.
@@ -252,7 +248,7 @@ clearvars -except ycal ytest Xcal Xtest objetos Nmir
 % prejudicando o modelo assim.
 
 % Recomendo adicionar o numero "2" no espectro tratado para nao mistura a
-% versao bruta e a versao tratada, alem disso, podemos ver se houve
+% versao bruta, original, e a versao tratada, alem disso, podemos ver se houve
 % modificacao do espectro atraves do comando plot.
 
 subplot(2,1,1)
@@ -283,12 +279,12 @@ plot(Nmir,Xcal2);
 
 % Esta funcao, pretrat, foi desenvolvida para aplicar o mesmo pre-tratamento
 % em dois espectros ao mesmo tempo, um de calibracao e outro teste,
-% todavia, tu pode fazer uma 'jogada' para somente tratar um espectro.
+% todavia, pode-se fazer uma 'jogada' para somente tratar um espectro.
 
 [Xcal2,~]=pretrat(Xcal,Xcal,{'deriv',[15,2,1]});
 
-% Mas, lembre-se, o Xtest deve ser OBRIGATORIAMENTE pre tratado em conjunto
-% com o Xcal.
+% Mas, lembre-se, o Xtest deve ser OBRIGATORIAMENTE pre-tratado em conjunto
+% com o Xcal, sendo este o primeiro input.
 
 close all
 subplot(2,1,1)
@@ -306,7 +302,7 @@ options.vene           = 5;
 options.vl             = 20;
 modelo=plsmodel2(Xcal2,ycal,options);
 
-% Repare, caso tu nao tenha fechado a imagem do subplot, o octave/matlab
+% Repare, caso nao tenha fechado a imagem do subplot, o octave/matlab
 % fara por cima o grafico de RMSECV x VL. Mas isso nao nos atrapalha.
 % Pelo grafico, podemos testar 6 e 8 variaveis latentes, antes, vamos
 % tratar o Xtest.
@@ -324,7 +320,7 @@ modelo8 = plsmodel2(Xcal2,ycal,Xtest2,ytest,options);
 %R2c    0.9532    0.9691
 %R2p    0.9759    0.9727
 
-% Nao e preciso usar o teste de acuracia para perceber que os modelos sao
+% Nao e preciso usar o teste de comparacao para perceber que os modelos sao
 % bem proximos, isso com base no RMSEP e R2p, apesar do RMSEC apontar uma
 % boa diferenca o 6 tem um numero menor de variaveis latentes, entao,
 % este e considerado o melhor modelo.
@@ -386,7 +382,7 @@ ylabel('Predicted','fontsize',14);
 % amostras mais proximas da linha de referencia em toda a faixa da
 % concentracao.
 
-% Teste de Acuracia.
+% Teste de comparacao.
 
 tic
 [pvalue,dist_tt,meandiff] = accuracy_test(ytest,modelo6.Ytest(:,2),modelo9.Ytest(:,2),'randbi',500000,0.05);
@@ -465,8 +461,8 @@ modelo9 = lev_res(modelo9,Xcal2,ycal,Xtest2,ytest);
 % Neste grafico combinamos a analise do Leverage com a analise do Residuo,
 % caso uma amostra esteja no priemiro quadrante, quadro superior direito, e
 % um forte indicio que ela seja um outlier. Neste modelo nao encontramos
-% nenhuma amostra ali, tu pode mover a legenda caso precise. Mas sera que
-% no modelo de VL 6 temos? Vamos verificar.
+% nenhuma amostra suspeita. Mas sera que no modelo de VL 6 temos algum outlier?
+% Vamos verificar.
 
 close all
 
@@ -484,7 +480,7 @@ legend('off')
 A = modelo6.lev_res.Sample_cal
 % Ao utilizar este comando, sabemos quais são as amostras do conjunto calibracao
 % que foram para o primeiro quadrante. Como ao amostras de calibracao, teremos
-% que refazer o PLS do começo, começando removendo as amsotras.
+% que refazer o modelo PLS, começando removendo as amostras.
 
 Xcal_2 = Xcal; ycal_2 = ycal;
 Xcal_2(A,:) = []; ycal_2(A,:) = [];
@@ -551,7 +547,7 @@ tic
 [pvalue,dist_tt,meandiff] = accuracy_test(ytest,modelo6.Ytest(:,2),modelo6_7.Ytest(:,2),'randbi',500000,0.05);
 toc
 
-% Note que dara um erro, o teste de acuracia so funciona quando o conjunto
+% Note que dara um erro, este teste de comparacao so funciona quando o conjunto
 % ytest tem a mesma quantidade de amostras, como removemos uma amostra, nao
 % podemos utilizar este teste. Entao temos que utilizar um teste nao
 % parametrico, todavia, como trata-se de um assunto complexo deixaremos
@@ -563,16 +559,6 @@ modelo6_2 = lev_res(modelo6_2,Xcal2_2,ycal_2,Xtest2_2,ytest_2);
 legend('off')
 
 % Agora nao temos nenhum amostra anomola.
-
-%% Selecao de Variaveis
-% O aperfeicoamento por Selecao de Variaveis pode ser realizado por
-% diversas tecnicas, o seu foco e conseguir selecionar as variaveis da
-% fonte analitica que tem as informacoes mais importantes para o modelo e
-% como consequencia, remover variaveis com pouca, ou nenhuma, informacao,
-% como ruido, e aperfeicoar o modelo.
-
-% Infelizmente, como se trata de um assunto complexo e cheio de detalhes,
-% nao iremos  aplicar/ensinar neste tutorial, mas o faremos num proximo.
 
 ___________________________________________________________________________
 %%
@@ -591,7 +577,7 @@ pkg load io
 
 cd('C:\Users\Exemplo\...\Monografia\PLS_Model');
 % Como extrair dados de planilha excel.
-[y,~,~]=xlsread('Oleos_Adulterados.xlsx','Plan1','B2:B230'); % Vetor de regress�o
+[y,~,~]=xlsread('Oleos_Adulterados.xlsx','Plan1','B2:B230'); % Vetor de regress�o
 %[A,B,C]=xlsread('XXX','YYY','ZZZ');
 % A funcao xlsread e utilizada para extrair informacao de planilhas como
 % xls, xlsx e csv.
@@ -757,7 +743,7 @@ modelo15=eparamenter(modelo15,Xcal,Xtest,ycal,ytest);
 
 % Note que ao analisar o LD o modelo com 9 variveis latentes demonstrou um
 % resultado melhor, entao neste caso o melhor modelo seria o VL 9.
-% Agora vamos analisar o gr�fico de medido e predito.
+% Agora vamos analisar o gr�fico de medido e predito.
 
 % Analisando o medido de previsto.
 
